@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resume - Oliver Renwick</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo"><a href="index.html">Oliver Renwick</a></div>
+    <nav>
+  <div class="hamburger" id="hamburger">&#9776;</div>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="resume.html" class="active">Resume</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+  </ul>
+</nav>
+  </header>
+
+  <!-- RESUME BODY -->
+  <main class="resume-page">
+   <div class="resume-container">
+    <div class="resume-header">
+  <h1 class="section-title">Resume</h1>
+  <a href="Resume.pdf" 
+   class="download-button" 
+   target="_blank" 
+   rel="noopener noreferrer">
+    📄 Download PDF
+  </a>
+</div>
+
+    <!-- SUMMARY -->
+    <section>
+      <h2 class="subheading">Summary</h2>
+      <p>Graphics Software Developer with 1.5 years of experience building GPU-driven, real-time rendering
+         applications using Vulkan and modern C++. Strong foundation in graphics programming, engine
+         architecture, and performance-oriented design. Proficient in Object-Oriented Programming, multi
+         threaded systems, and shader-based rendering techniques including PBR and post-processing. Seeking to
+         contribute to high-performance graphics systems and tools development.
+      </p>
+    </section>
+
+    <!-- EXPERIENCE -->
+  <section>
+  <h2 class="subheading">Work Experience</h2>
+  <p><strong>GLSL Developer - Hexr Factory Immersive Tech Pvt Ltd,&nbsp;&nbsp;&nbsp;India</strong><br>
+     March 2023 – August 2024
+  </p>
+  <ul class="work-experience-list">
+    <li>Implemented a custom .OBJ parser to efficiently load .obj and .mtl files for an in-house engine, improving asset import and rendering workflows.</li>
+    <li>Designed and implemented an Entity Component System (ECS) for the in-house game engine, enabling flexible object properties and improved modularity in scene management.</li>
+    <li>Implemented the Vulkan rendering pipeline for the in-house engine, implementing depth buffering, anti-aliasing, and efficient management of vertex, index, and uniform buffers.</li>
+    <li>Researched and implemented lighting models, including Blinn-Phong and Physically Based Rendering (PBR), with support for directional, point, and area lights to enhance visual realism.</li>
+    <li>Implemented a debugging GUI using Dear ImGui, enabling real-time editing of object properties such as transformations and materials.</li>
+    <li>Mentored team members on graphics programming.</li>
+  </ul>
+</section>
+
+    <!-- SKILLS -->
+    <section>
+      <h2 class="subheading">Skills</h2>
+      <ul class="skills">
+        <li>Vulkan</li>
+        <li>C/C++</li>
+        <li>GLSL</li>
+        <li>OpenGL</li>
+        <li>WinSock</li>
+        <li>Render Doc</li>
+        <li>Multithreaded systems</li>
+        <li>SIMD optimizations</li>
+        <li>UDP Network Programming</li>
+      </ul>
+    </section>
+
+    <!-- PROJECTS -->
+    <section>
+      <h2 class="subheading">Projects</h2>
+      <h3>Project 1: Ghost Engine</h3>
+      <p>Built a GPU-driven game engine focused on real-time rendering, physics, and multiplayer networking. The engine features a modern rendering architecture with support for physically based rendering (PBR), skybox environments, shadow rendering, and multi-threaded resource management.</p>
+      <p>Key technologies:</p>
+      <ul>
+      <li>Vulkan API for high-performance rendering</li>
+      <li>Multithreaded asset streaming and multithreaded draw submission</li>
+      <li>UDP-based client-server networking for real-time object state replication</li>
+      <li>Debug and profiling integration using Render Doc</li>
+      </ul>
+
+      <h3>Project 2: Vulkan Renderer</h3>
+      <p>Developed a real-time renderer using the Vulkan API, with GLTF model loading capabilities and skybox rendering for immersive scene visuals.</p>
+<ul>
+  <li>Developed using Vulkan API and modern C++ for efficient GPU control and performance.</li>
+  <li>Implemented GLTF model loading to support diverse 3D assets and flexible scene composition.</li>
+  <li>Integrated skybox rendering for immersive environment backgrounds and enhanced visuals.</li>
+</ul>
+    </section>
+
+    <!-- EDUCATION -->
+    <section>
+      <h2 class="subheading">Education</h2>
+      <p><strong>BSc in Visual Communication – Loyola College,&nbsp;&nbsp;&nbsp;India</strong><br>
+      June 2020 – May 2023
+  </p>
+    </section>
+
+  </div>
+</main>
+<script src="nav.js"></script>
+</body>
+</html>

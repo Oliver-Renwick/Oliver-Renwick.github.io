@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio</title>
+  <style>
+    /* Reset and base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      background-color: black;
+      font-family: 'Times New Roman', Times, serif;
+      color: white;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: transparent;
+      z-index: 100;
+    }
+
+    .logo {
+      text-decoration: none;
+      color: #ff4d4d;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+   .logo:hover {
+  color: red;
+  transition: color 0.3s ease;
+}
+
+    nav {
+  position: relative;
+}
+
+/* Hide hamburger by default (desktop) */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ff4d4d;
+}
+
+/* Nav links as horizontal list */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  display: block;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+  color: red;
+  background-color: rgba(255, 0, 0, 0.15);
+}
+
+/* Responsive nav - below 768px */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  
+  .nav-links {
+    display: none;          /* hide nav by default on mobile */
+    flex-direction: column;
+    background-color: black;
+    position: absolute;
+    top: 60px;             /* below header */
+    right: 50px;
+    width: 160px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #ff4d4d66;
+    z-index: 101;
+  }
+
+  .nav-links.active {
+    display: flex;          /* show nav when active */
+  }
+
+  .nav-links li {
+    margin: 10px 0;
+  }
+}
+
+    /* PAGE LAYOUT */
+    main.portfolio-page {
+      padding: 120px 40px 60px;
+      background-color: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .portfolio-container {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .portfolio-title {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ff4d4d;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .projects-title {
+      font-size: 2rem;
+      color: #ff4d4d;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    /* Projects grid */
+    .projects-grid {
+    display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+    }
+
+    .project-card {
+position: relative;
+  width: 100%;     /* ← So it fills the 48% given by the link wrapper */
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 5px #ff4d4d44;
+  transition: box-shadow 0.3s ease;
+}
+    .project-card:hover {
+      box-shadow: 0 0 20px #ff4d4dbb;
+    }
+
+    .project-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .project-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .project-card .overlay {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(255, 77, 77, 0.8);
+      color: white;
+      text-align: center;
+      font-size: 1.3rem;
+      padding: 10px 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .project-card:hover .overlay {
+      opacity: 1;
+    }
+
+   .project-link {
+     flex: 0 0 48%;   /* ← This ensures each project takes 48% width */
+  text-decoration: none;
+  display: block;
+    }
+
+    @media (max-width: 768px) {
+  .projects-grid {
+    flex-direction: column;   /* Stack the project cards vertically */
+    gap: 20px;
+  }
+
+  .project-link {
+    width: 100%;             /* Full width for links on small screens */
+  }
+
+  .project-card {
+    width: 100%;             /* Full width cards */
+  }
+
+  /* Adjust font sizes a bit */
+  .portfolio-title {
+    font-size: 2.2rem;
+  }
+
+  .projects-title {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  /* Adjust padding on main content */
+  main.portfolio-page {
+    padding: 100px 20px 40px;
+  }
+}
+
+@media (max-width: 400px) {
+  .portfolio-title {
+    font-size: 1.8rem;
+  }
+
+  .projects-title {
+    font-size: 1.3rem;
+  }
+}
+
+  </style>
+</head>
+
+
+
+<body>
+
+<header>
+  <a href="index.html" class="logo">Oliver Renwick</a>
+  <nav>
+  <div class="hamburger" id="hamburger">&#9776;</div>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="resume.html">Resume</a></li>
+    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+  </ul>
+</nav>
+</header>
+
+<main class="portfolio-page">
+  <div class="portfolio-container">
+    <h1 class="portfolio-title">Portfolio</h1>
+    <h2 class="projects-title">Projects</h2>
+
+    <div class="projects-grid">
+      <a href="https://github.com/Oliver-Renwick/Ghost" target="_blank" class="project-link">
+  <div class="project-card">
+    <img src="Selected_right.png" alt="Ghost Engine Project" />
+    <div class="overlay">Ghost Engine</div>
+  </div>
+</a>
+
+<a href="https://github.com/Oliver-Renwick/Real-Time-Renderer" target="_blank" class="project-link">
+  <div class="project-card">
+    <img src="vulkan_renderer.PNG" alt="Vulkan Renderer Project" />
+    <div class="overlay">Vulkan Renderer</div>
+  </div>
+</a>
+    </div>
+
+    <h2 class="projects-title" style="margin-top: 60px;">YouTube Videos</h2>
+
+<div class="projects-grid">
+  <a href="https://www.youtube.com/watch?v=YTnyMrknYvQ" target="_blank" class="project-link">
+    <div class="project-card">
+      <img src="Other Version.png" alt="YouTube Video 1" />
+      <div class="overlay">Beyond Hello Triangle – Vulkan Game Engine in Progress</div>
+    </div>
+  </a>
+
+  <a href="https://www.youtube.com/watch?v=0siSgmZTg-s" target="_blank" class="project-link">
+    <div class="project-card">
+      <img src="Game Engine Thumnail (1)00000000.jpg" alt="YouTube Video 2" />
+      <div class="overlay">How I Started Building My Game Engine with Vulkan — From Triangle to Shadows</div>
+    </div>
+  </a>
+</div>
+
+  </div>
+</main>
+
+<script src="nav.js"></script>
+
+</body>
+</html>
