@@ -27,6 +27,7 @@ const fragmentShaderSource = `
   void main() {
     vec2 st = gl_FragCoord.xy / u_resolution;
     vec3 color = 0.5 + 0.5 * cos(u_time + st.xyx + vec3(0, 2, 4));
+    color = color * 0.6;
     gl_FragColor = vec4(color, 1.0);
   }
 `;
