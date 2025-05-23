@@ -8,11 +8,39 @@
 body, html {
   height: 100%;
   margin: 0;
-  background-color: black;
+  background-color: transparent;
   font-family: 'Times New Roman', Times, serif;
   color: white;
 }
 
+#shader-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* behind content */
+  display: block;
+}
+
+.index-page .logo a {
+  text-decoration: none;
+  color: #ffffff; /* red tint */
+}
+
+.index-page .logo a:hover {
+  color: ff4d4d;
+}
+
+
+
+.index-page header {
+  background-color: rgba(0, 0, 0, 0.514);
+  position: fixed; /* optional, if you want it fixed */
+  width: 100%;
+  z-index: 10; /* so it stays above the canvas and content */
+  opacity: 0.9; /* optional, slight transparency */
+}
 /* HEADER */
 header {
   position: fixed;
@@ -79,9 +107,9 @@ nav a:hover {
 .content h2 {
   font-size: 2rem;
   margin-bottom: 25px;
-  font-weight: 500;
+  font-weight: bold;
   font-style: italic;
-  color: #ff4d4d; /* matching red tint */
+  color: #ffffff; /* matching red tint */
 }
 
 .content p {
@@ -106,18 +134,18 @@ nav a:hover {
   height: 48px;
   border-radius: 50%;
   background-color: black;
-  color: #ff4d4d; /* red icon */
+  color: #ffffff; /* red icon */
   font-size: 1.5rem;
   text-decoration: none;
   transition: 
     color 0.3s ease, 
     background-color 0.3s ease;
-  border: 2px solid #ff4d4d;
+  border: 2px solid #ffffff;
 }
 
 .social-icons a:hover {
   color: black;             /* icon turns black */
-  background-color: #ff4d4d; /* background circle turns red */
+  background-color: #ffffff; /* background circle turns red */
 }
 
 .static-text {
