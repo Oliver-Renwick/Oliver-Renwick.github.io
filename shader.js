@@ -20,16 +20,75 @@ const vertexShaderSource = `
 `;
 
 const fragmentShaderSource = `
-  precision mediump float;
-  uniform float u_time;
-  uniform vec2 u_resolution;
+ precision mediump float;
 
-  void main() {
-    vec2 st = gl_FragCoord.xy / u_resolution;
-    vec3 color = 0.5 + 0.5 * cos(u_time + st.xyx + vec3(0, 2, 4));
-    color = color * 0.6;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+// Signed distance function for a sphere
+float sphereSDF(vec3 p, vec3 center, float radius) {
+    return length(p - center) - radius;
+}
+
+// Scene SDF that includes animated sphere
+float sceneSDF(vec3 p) {
+    // Move one sphere left and right over time
+    float xOffset = sin(-u_time) * 1.5;
+    vec3 movingCenter = vec3(xOffset, 0.0, 3.5);
+
+    float s1 = sphereSDF(p, movingCenter, 1.0);
+    float s2 = sphereSDF(p, vec3(-movingCenter.x,movingCenter.y, -1.5) , 1.0);
+
+    return min(s1, s2);
+}
+
+// Estimate normal at point
+vec3 getNormal(vec3 p) {
+    float d = 0.001;
+    vec2 e = vec2(1.0, -1.0) * d;
+    return normalize(vec3(
+        sceneSDF(p + vec3(e.x, e.y, e.y)) - sceneSDF(p - vec3(e.x, e.y, e.y)),
+        sceneSDF(p + vec3(e.y, e.x, e.y)) - sceneSDF(p - vec3(e.y, e.x, e.y)),
+        sceneSDF(p + vec3(e.y, e.y, e.x)) - sceneSDF(p - vec3(e.y, e.y, e.x))
+    ));
+}
+
+// Simple directional lighting
+float getLight(vec3 p) {
+    vec3 lightDir = normalize(vec3(0.0, .0, -1.0));
+    vec3 n = getNormal(p);
+    return clamp(dot(n, lightDir), 0.0, 1.0);
+}
+
+void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
+    vec3 ro = vec3(0.0, 0.0, -5.0); // camera origin
+    vec3 rd = normalize(vec3(uv, 1.5)); // ray direction
+
+    float t = 0.0;
+    float dist;
+    bool hit = false;
+    vec3 p;
+
+    for (int i = 0; i < 64; i++) {
+        p = ro + t * rd;
+        dist = sceneSDF(p);
+        if (dist < 0.001) {
+            hit = true;
+            break;
+        }
+        t += dist;
+        if (t > 20.0) break;
+    }
+
+    vec3 color = vec3(0.0);
+    if (hit) {
+        float light = getLight(p);
+        color = vec3(1.0, 0.1, 0.1) * light; // red tint
+    }
+
     gl_FragColor = vec4(color, 1.0);
-  }
+}
 `;
 
 function createShader(gl, type, source) {
