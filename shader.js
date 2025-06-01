@@ -1,6 +1,15 @@
 const canvas = document.getElementById("shader-canvas");
 const gl = canvas.getContext("webgl");
 
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas(); 
+
 let mouse = [0, 0];
 let zoom = 3.0;
 
@@ -17,6 +26,31 @@ else{
 let isDragging = false;
 let lastMouse = [0, 0];
 let mouseDelta = [0, 0]; // Used in shader
+
+canvas.addEventListener("touchstart", (e) => {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    const touch = e.touches[0];
+    lastTouch = [touch.clientX, touch.clientY];
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchmove", (e) => {
+  if (isDragging && e.touches.length === 1) {
+    e.preventDefault(); // prevent scrolling
+    const touch = e.touches[0];
+    let dx = touch.clientX - lastTouch[0];
+    let dy = touch.clientY - lastTouch[1];
+    mouse[0] += dx * 0.001;
+    mouse[1] += dy * 0.001; // flip y to match GL
+    lastTouch = [touch.clientX, touch.clientY];
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchend", () => {
+  isDragging = false;
+});
+
 
 canvas.addEventListener("mousedown", (e) => {
   isDragging = true;
