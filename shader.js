@@ -1,6 +1,10 @@
 const canvas = document.getElementById("shader-canvas");
 const gl = canvas.getContext("webgl");
 
+let mouse = [0, 0];
+let zoom = 3.0;
+
+
 if (!canvas || !gl) {
   alert("WebGL or canvas not supported.");
 }
@@ -8,6 +12,44 @@ if (!canvas || !gl) {
 else{
     console.log("Web gl and canvas is supported");
 }
+
+
+let isDragging = false;
+let lastMouse = [0, 0];
+let mouseDelta = [0, 0]; // Used in shader
+
+canvas.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  lastMouse = [e.clientX, e.clientY];
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+
+  const dx = e.clientX - lastMouse[0];
+  const dy = e.clientY - lastMouse[1];
+  lastMouse = [e.clientX, e.clientY];
+
+  // Update yaw (horizontal)
+  mouse[0] += dx * 0.005;
+
+  // Update pitch (vertical) with clamp
+  mouse[1] += dy * 0.005;
+  const pitchLimit = Math.PI / 2 - 0.05; // just below 90 degrees
+  mouse[1] = Math.max(-pitchLimit, Math.min(pitchLimit, mouse[1]));
+});
+
+//Zoom
+canvas.addEventListener("wheel", (e) => {
+  e.preventDefault(); // Prevent page scroll
+
+  zoom += e.deltaY * 0.01;
+  zoom = Math.max(1.0, Math.min(10.0, zoom)); // Clamp zoom between 1 and 10
+});
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -20,115 +62,105 @@ const vertexShaderSource = `
 `;
 
 const fragmentShaderSource = `
-precision mediump float;
+ precision mediump float;
 
 uniform float u_time;
 uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_zoom;
 
-// Signed distance function for a sphere
+
+#define MAX_STEPS 100
+#define MAX_DIST 100.
+#define SURF_DIST .001
+#define TAU 6.283185
+#define PI 3.141592
+#define S smoothstep
+#define T iTime
+
 float sphereSDF(vec3 p, vec3 center, float radius) {
     return length(p - center) - radius;
 }
 
-float MandelbulbSDF(vec3 p) {
-    vec3 z = p;
-    float dr = 1.0;
-    float r = 0.0;
-    const int ITERATIONS = 8;
-    const float POWER = 8.0;
-
-    for (int i = 0; i < ITERATIONS; i++) {
-        r = length(z);
-        if (r > 2.0) break;
-
-        // convert to polar coordinates
-        float theta = acos(z.z / r);
-        float phi = atan(z.y, z.x);
-        dr =  pow(r, POWER - 1.0) * POWER * dr + 1.0;
-
-        // scale and rotate the point
-        float zr = pow(r, POWER);
-        theta = theta * POWER;
-        phi = phi * POWER;
-
-        // convert back to cartesian coordinates
-        z = zr * vec3(
-            sin(theta) * cos(phi),
-            sin(phi) * sin(theta),
-            cos(theta)
-        );
-        z += p;
-    }
-    return 0.5 * log(r) * r / dr;
+mat2 Rot(float a) {
+    float s=sin(a), c=cos(a);
+    return mat2(c, -s, s, c);
 }
 
-mat3 rotationY(float angle)
+float sdBox(vec3 p, vec3 s) {
+    p = abs(p)-s;
+	return length(max(p, 0.))+min(max(p.x, max(p.y, p.z)), 0.);
+}
+
+
+float GetDist(vec3 p) {
+    float grid = abs(p.y) - .1;
+    float angle = abs(sin(u_time * 0.9)) - 1.0;
+    vec3 P = p;
+    P.xz = fract(P.xz) - .5;
+    
+    //float d = sphereSDF(p, vec3(0.0), 0.3);
+     float d = sphereSDF(P, vec3(0.0,angle,0.0), 0.3);
+    return d;
+}
+
+float RayMarch(vec3 ro, vec3 rd) {
+	float dO=0.;
+    
+    for(int i=0; i<MAX_STEPS; i++) {
+    	vec3 p = ro + rd*dO;
+        float dS = GetDist(p);
+        dO += dS;
+        if(dO>MAX_DIST || abs(dS)<SURF_DIST) break;
+    }
+    
+    return dO;
+}
+
+vec3 GetNormal(vec3 p) {
+    vec2 e = vec2(.001, 0);
+    vec3 n = GetDist(p) - 
+        vec3(GetDist(p-e.xyy), GetDist(p-e.yxy),GetDist(p-e.yyx));
+    
+    return normalize(n);
+}
+
+vec3 GetRayDir(vec2 uv, vec3 p, vec3 l, float z) {
+    vec3 
+        f = normalize(l-p),
+        r = normalize(cross(vec3(0,1,0), f)),
+        u = cross(f,r),
+        c = f*z,
+        i = c + uv.x*r + uv.y*u;
+    return normalize(i);
+}
+
+void main()
 {
-    float c = cos(angle);
-    float s = sin(angle);
-    return mat3(
-        c, 0.0, -s,
-        0.0, 1.0, 0.0,
-        s, 0.0, c
-    );
-}
+     vec2 uv = (gl_FragCoord.xy -.5*u_resolution.xy)/u_resolution.y;
+	vec2 m = u_mouse.xy/u_resolution.xy;
 
-// Scene SDF that includes animated sphere
-float sceneSDF(vec3 p) {
-    float angle = u_time * 0.5;
-    p = rotationY(angle) * p;
+    vec3 ro = vec3(0.0, 0.0, u_zoom);
+     ro.yz *= Rot(-u_mouse.y); // vertical rotation (pitch)
+    ro.xz *= Rot(-u_mouse.x); // horizontal rotation (yaw)
+    
+    vec3 rd = GetRayDir(uv, ro, vec3(.0,0.0,0.0), 1.0);
+    vec3 col = vec3(0.0);
+   
+    float d = RayMarch(ro, rd);
 
-    return MandelbulbSDF(p);
-}
+    if(d<MAX_DIST) {
+        vec3 p = ro + rd * d;
+        vec3 n = GetNormal(p);
+        vec3 r = reflect(rd, n);
 
-// Estimate normal at point
-vec3 getNormal(vec3 p) {
-    float d = 0.001;
-    vec2 e = vec2(1.0, -1.0) * d;
-    return normalize(vec3(
-        sceneSDF(p + vec3(e.x, e.y, e.y)) - sceneSDF(p - vec3(e.x, e.y, e.y)),
-        sceneSDF(p + vec3(e.y, e.x, e.y)) - sceneSDF(p - vec3(e.y, e.x, e.y)),
-        sceneSDF(p + vec3(e.y, e.y, e.x)) - sceneSDF(p - vec3(e.y, e.y, e.x))
-    ));
-}
-
-// Simple directional lighting
-float getLight(vec3 p) {
-    vec3 lightDir = normalize(vec3(0.0, .0, -1.0));
-    vec3 n = getNormal(p);
-    return clamp(dot(n, lightDir), 0.0, 1.0);
-}
-
-
-
-void main() {
-    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
-    vec3 ro = vec3(0.0, 0.0, -4.5); // camera origin
-    vec3 rd = normalize(vec3(uv, 1.5)); // ray direction
-
-    float t = 0.0;
-    float dist;
-    bool hit = false;
-    vec3 p;
-
-    for (int i = 0; i < 64; i++) {
-        p = ro + t * rd;
-        dist = sceneSDF(p);
-        if (dist < 0.001) {
-            hit = true;
-            break;
-        }
-        t += dist;
-        if (t > 20.0) break;
+        float dif = dot(n, normalize(vec3(.1,.2,3.0)))*.5+.5;
+        col = vec3(dif, 0.0, 0.0);
     }
-
-    vec3 color = vec3(0.0);
-    if (hit) {
-        float light = getLight(p);
-        color = vec3(1.0, 0.1, 0.1) * light; // red tint
-    }
-
-    gl_FragColor = vec4(color, 1.0);
+    
+    col = pow(col, vec3(.4545));	// gamma correction
+    
+    gl_FragColor = vec4(col,1.0);
 }
 `;
 
@@ -166,6 +198,8 @@ gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
 const timeLocation = gl.getUniformLocation(program, "u_time");
 const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+const mouseLocation = gl.getUniformLocation(program, "u_mouse");
+const zoomLocation = gl.getUniformLocation(program, "u_zoom");
 
 function render(time) {
    time *= 0.001;
@@ -176,6 +210,8 @@ function render(time) {
 
   gl.uniform1f(timeLocation, time);
   gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+  gl.uniform2f(mouseLocation, mouse[0], mouse[1]);
+  gl.uniform1f(zoomLocation, zoom);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
   requestAnimationFrame(render);
