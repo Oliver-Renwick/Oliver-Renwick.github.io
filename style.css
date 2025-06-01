@@ -19,8 +19,9 @@ body, html {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -1; /* behind content */
   display: block;
+  z-index: 0; /* Instead of -1 */
+  pointer-events: auto; /* Allow mouse clicks */
 }
 
 .index-page .logo a {
@@ -31,6 +32,7 @@ body, html {
 .index-page .logo a:hover {
   color: ff4d4d;
 }
+
 
 
 
@@ -88,6 +90,7 @@ nav a:hover {
 
 .content {
   max-width: 800px;
+  pointer-events: none;
   padding: 60px;
   display: flex;
   flex-direction: column;
@@ -128,6 +131,7 @@ nav a:hover {
 
 .social-icons a {
   display: flex;
+  pointer-events: auto;
   justify-content: center;
   align-items: center;
   width: 48px;
