@@ -41,9 +41,12 @@ canvas.addEventListener("touchmove", (e) => {
     const touch = e.touches[0];
     let dx = touch.clientX - lastTouch[0];
     let dy = touch.clientY - lastTouch[1];
-    mouse[0] += dx * 0.001;
-    mouse[1] += dy * 0.001; // flip y to match GL
+    mouse[0] += dx * 0.005;
+    mouse[1] += dy * 0.005; // flip y to match GL
     lastTouch = [touch.clientX, touch.clientY];
+
+    const pitchLimit = Math.PI / 2 - 0.05; // just below 90 degrees
+  mouse[1] = Math.max(-pitchLimit, Math.min(pitchLimit, mouse[1]));
   }
 }, { passive: false });
 
