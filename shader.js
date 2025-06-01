@@ -11,7 +11,7 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas(); 
 
 let mouse = [0, 0];
-let zoom = 3.0;
+let zoom = 5.0;
 
 
 if (!canvas || !gl) {
@@ -24,6 +24,8 @@ else{
 
 
 let isDragging = false;
+let lastPinchDist = null;
+
 let lastMouse = [0, 0];
 let mouseDelta = [0, 0]; // Used in shader
 
@@ -32,6 +34,25 @@ canvas.addEventListener("touchstart", (e) => {
     isDragging = true;
     const touch = e.touches[0];
     lastTouch = [touch.clientX, touch.clientY];
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchmove", (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (lastPinchDist !== null) {
+      const delta = dist - lastPinchDist;
+      zoom -= delta * 0.01; // zoom speed
+      zoom = Math.max(1.0, Math.min(zoom, 10.0)); // clamp zoom range
+    }
+
+    lastPinchDist = dist;
+  } else {
+    lastPinchDist = null;
   }
 }, { passive: false });
 
@@ -82,11 +103,10 @@ document.addEventListener("mousemove", (e) => {
 
 //Zoom
 canvas.addEventListener("wheel", (e) => {
-  e.preventDefault(); // Prevent page scroll
-
   zoom += e.deltaY * 0.01;
-  zoom = Math.max(1.0, Math.min(10.0, zoom)); // Clamp zoom between 1 and 10
-});
+  zoom = Math.max(1.0, Math.min(zoom, 10.0));
+  e.preventDefault();
+}, { passive: false });
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -177,7 +197,7 @@ void main()
      vec2 uv = (gl_FragCoord.xy -.5*u_resolution.xy)/u_resolution.y;
 	vec2 m = u_mouse.xy/u_resolution.xy;
 
-    vec3 ro = vec3(0.0, 0.0, u_zoom);
+    vec3 ro = vec3(0.0, u_zoom, u_zoom);
      ro.yz *= Rot(-u_mouse.y); // vertical rotation (pitch)
     ro.xz *= Rot(-u_mouse.x); // horizontal rotation (yaw)
     
