@@ -12,6 +12,11 @@
 <body class = "index-page">
   <canvas id="shader-canvas"></canvas>
 
+  <div class="instruction-overlay" id="instruction">
+  <p>🖱️ Click and drag to look around<br>🔍 Scroll or pinch to zoom</p>
+  <button class="close-instruction" onclick="document.getElementById('instruction').style.display='none'">✖</button>
+</div>
+
   <header>
      <div class="logo"><a href="index.html" class="active">Oliver Renwick</a></div>
     <nav>
@@ -41,6 +46,11 @@
     </div>
   </main>
   <script src="shader.js"></script>
+  <script>
+  document.querySelector(".instruction-overlay").addEventListener("click", function() {
+    this.style.display = "none";
+  });
+</script>
   <script src="nav.js"></script>
 </body>
 </html>
