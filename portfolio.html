@@ -155,16 +155,24 @@ position: relative;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 0 5px #ff4d4d44;
-  transition: box-shadow 0.3s ease;
+  /*transition: box-shadow 0.3s ease;*/
+   opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
+
+.project-card.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
     .project-card:hover {
       box-shadow: 0 0 20px #ff4d4dbb;
     }
 
     .project-card img {
       width: 100%;
-      height: auto;
-      display: block;
+      height: 220px;   /* fixed height */
       transition: transform 0.3s ease;
     }
 
@@ -173,6 +181,8 @@ position: relative;
     }
 
     .project-card .overlay {
+      padding: 8px;
+      white-space: normal;
       position: absolute;
       bottom: 0;
       width: 100%;
@@ -180,7 +190,6 @@ position: relative;
       color: white;
       text-align: center;
       font-size: 1.3rem;
-      padding: 10px 0;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -234,6 +243,138 @@ position: relative;
     font-size: 1.3rem;
   }
 }
+
+/*For external card!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #111;
+  border: 2px solid #ff4d4d;
+  color: white;
+  max-width: 600px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+  position: relative;
+}
+
+.modal-content img {
+  width: 100%;
+  display: block;
+}
+
+.modal-text {
+  padding: 20px;
+}
+
+.modal-text h2 {
+  color: #ff4d4d;
+  margin-bottom: 10px;
+}
+
+.modal-text p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.modal-text a {
+  background: #ff4d4d;
+  color: black;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.modal-text a:hover {
+  background: #eb0000;
+}
+
+
+
+.close-btn {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 2rem;
+  color: #ff4d4d;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+/* Modal button shared style */
+.modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+}
+
+/* Project button: solid red */
+.project-btn {
+  background-color: #ff4d4d;
+  color: black;
+  border: none;
+}
+
+.project-btn:hover {
+  background-color: red;
+  color: white;
+}
+
+/* Video button: bold red like YouTube with play circle */
+.video-btn {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.video-btn:hover {
+  background-color: #cc0000;
+  transform: scale(1.05);
+}
+
+/* Play icon container */
+.video-btn .play-icon {
+  width: 20px;
+  height: 20px;
+  fill: #ff0000;
+  background-color: white;
+  border-radius: 50%;
+  padding: 3px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
 
   </style>
 </head>
@@ -296,7 +437,144 @@ position: relative;
   </div>
 </main>
 
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <img id="modal-image" src="" alt="Project Preview" />
+    <div class="modal-text">
+      <h2 id="modal-title">Project Title</h2>
+      <p id="modal-description">Project description goes here.</p>
+      <a id="modal-link" href="#" target="_blank">View Project</a>
+    </div>
+  </div>
+</div>
+
 <script src="nav.js"></script>
+
+<script>
+
+  window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.classList.add('loaded');
+  });
+});
+
+
+/*Modal Card*/
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modal-image");
+const modalTitle = document.getElementById("modal-title");
+const modalDesc = document.getElementById("modal-description");
+const modalLink = document.getElementById("modal-link");
+const closeBtn = document.querySelector(".close-btn");
+
+const projectData = {
+  "Ghost": {
+    title: "Ghost Engine",
+    image: "Selected_right.png",
+   description: `
+    Ghost is a custom C++ game engine built from the ground up using Vulkan. 
+    It focuses on real-time rendering, physics, and multiplayer support with a modular architecture.
+    
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li> Vulkan-based Deferred & Forward+ Rendering</li>
+      <li> Vulkan-based Dynamic Rendering</li>
+      <li> Custom UDP Networking System</li>
+      <li> Multi-threaded Task Scheduling and Asynchronous Resource Loading</li>
+      <li> Render Graph Architecture</li>
+      <li> Descriptor Indexing & Dynamic Resource Binding</li>
+      <li> Impulse-based Physics Engine</li>
+      <li> Win32 Input and Event Handling</li>
+    </ul>
+  `,
+    link: "https://github.com/Oliver-Renwick/Ghost",
+    type: "project"
+  },
+  "Vulkan": {
+    title: "Vulkan Renderer",
+    image: "vulkan_renderer.PNG",
+     description: `
+    This renderer is a standalone real-time graphics project built in C++ using Vulkan, 
+    focusing on physically-based rendering and asset integration.
+
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li> GLTF Loading and Scene Parsing</li>
+      <li> Physically-Based Rendering (PBR) Workflow</li>
+      <li> Skybox Rendering with Cubemaps</li>
+    </ul>
+  `,
+    link: "https://github.com/Oliver-Renwick/Real-Time-Renderer",
+    type: "project"
+  },
+  "Triangle": {
+    title: "Beyond Hello Triangle",
+    image: "Other Version.png",
+    description: "In this second video of the Ghost Engine development series, I discuss key topics including multi-threading, GLTF model loading, and networking implementation.",
+    link: "https://www.youtube.com/watch?v=YTnyMrknYvQ",
+    type: "video"
+  },
+  "Shadows": {
+    title: "Triangle to Shadows",
+    image: "Game Engine Thumnail (1)00000000.jpg",
+    description: "My journey from drawing the first triangle to implementing shadows and Impulse-based Physics Engine.",
+    link: "https://www.youtube.com/watch?v=0siSgmZTg-s",
+    type: "video"
+  }
+};
+
+// Bind click event to cards
+document.querySelectorAll(".project-link").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    const img = link.querySelector("img");
+    const src = img.getAttribute("src");
+
+    let key = "";
+    if (src.includes("Selected_right")) key = "Ghost";
+    else if (src.includes("vulkan_renderer")) key = "Vulkan";
+    else if (src.includes("Other Version")) key = "Triangle";
+    else if (src.includes("Game Engine Thumnail")) key = "Shadows";
+
+    const data = projectData[key];
+    modalImg.src = data.image;
+    modalTitle.textContent = data.title;
+    modalDesc.innerHTML = data.description;
+    modalLink.href = data.link;
+    modalLink.textContent = data.type === "video" ? "View Video" : "View Project";
+
+    modal.style.display = "flex";
+
+    modalLink.className = "modal-btn"; // Reset first
+    modalLink.innerHTML = ""; // Clear existing text/icons
+
+if (data.type === "video") {
+  modalLink.classList.add("video-btn");
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "play-icon");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+
+  modalLink.appendChild(svg);
+  modalLink.append("View Video");
+} else {
+  modalLink.classList.add("project-btn");
+  modalLink.textContent = "View Project";
+}
+  });
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+window.addEventListener("click", e => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+</script>
 
 </body>
 </html>
