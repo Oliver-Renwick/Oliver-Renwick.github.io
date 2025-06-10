@@ -161,6 +161,17 @@ float GetDist(vec3 p) {
     return d;
 }
 
+vec3 fogColor = vec3(0.30, 0.36, 0.60);
+
+vec3 applyFog(vec3 rgb, float dis)
+{
+    float dist = (dis <= 0.) ? -dis : dis;
+    float startDist = 80.0;
+    float fogAmount = 1.0 - exp(-(dist-8.0) * (1.0/startDist));
+    return mix(rgb, fogColor, fogAmount);
+}
+
+
 float RayMarch(vec3 ro, vec3 rd) {
 	float dO=0.;
     
@@ -202,7 +213,7 @@ void main()
     ro.xz *= Rot(-u_mouse.x); // horizontal rotation (yaw)
     
     vec3 rd = GetRayDir(uv, ro, vec3(.0,0.0,0.0), 1.0);
-    vec3 col = vec3(0.0);
+    vec3 col = fogColor + rd.y * 0.4;
    
     float d = RayMarch(ro, rd);
 
@@ -213,7 +224,10 @@ void main()
 
         float dif = dot(n, normalize(vec3(.1,.2,3.0)))*.5+.5;
         col = vec3(dif, 0.0, 0.0);
+
+         col = applyFog(col, -p.z);
     }
+    
     
     col = pow(col, vec3(.4545));	// gamma correction
     
