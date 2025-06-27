@@ -414,11 +414,21 @@ position: relative;
     <div class="overlay">Vulkan Renderer</div>
   </div>
 </a>
+
+
     </div>
 
     <h2 class="projects-title" style="margin-top: 60px;">YouTube Videos</h2>
 
 <div class="projects-grid">
+
+  <a href="https://youtu.be/UnD3YwhZ5wY?si=RIyQ7wkD7fzZ99GV" target="_blank" class="project-link">
+  <div class="project-card">
+    <img src="Memory Mangement.png" alt="Memory Allocator" />
+    <div class="overlay">How Games Manage Memory (And Why You Should Care)</div>
+  </div>
+</a>
+
   <a href="https://www.youtube.com/watch?v=YTnyMrknYvQ" target="_blank" class="project-link">
     <div class="project-card">
       <img src="Other Version.png" alt="YouTube Video 1" />
@@ -531,7 +541,26 @@ const projectData = {
     description: "My journey from drawing the first triangle to implementing shadows and Impulse-based Physics Engine.",
     link: "https://www.youtube.com/watch?v=0siSgmZTg-s",
     type: "video"
-  }
+  },
+
+  "Allocator": {
+  title: "Custom Memory Allocator",
+  image: "Memory Mangement.png",
+  description: `
+    In this episode, I explore custom memory management in game engines. Learn how I implemented my own memory allocator for performance. 
+     Animated it with Manim (in Python) and wrote 1500+ lines of code for this video.
+
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li> Memory Arena</li>
+      <li> Linear Allocator </li>
+      <li> Stack Allocator </li>
+      <li> Double Stack Allocator </li>
+      <li> Pool Allocator </li>
+    </ul>
+  `,
+  link: "https://youtu.be/UnD3YwhZ5wY?si=RIyQ7wkD7fzZ99GV",
+  type: "video"
+}
 };
 
 // Bind click event to cards
@@ -546,6 +575,7 @@ document.querySelectorAll(".project-link").forEach(link => {
     else if (src.includes("vulkan_renderer")) key = "Vulkan";
     else if (src.includes("Other Version")) key = "Triangle";
     else if (src.includes("Game Engine Thumnail")) key = "Shadows";
+    else if (src.includes("Memory Mangement")) key = "Allocator";
 
     const data = projectData[key];
     modalImg.src = data.image;
