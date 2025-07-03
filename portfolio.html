@@ -359,6 +359,8 @@ position: relative;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
+.modal-text { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+
 .video-btn:hover {
   background-color: #cc0000;
   transform: scale(1.05);
@@ -572,6 +574,7 @@ const projectData = {
     </ul>
   `,
   link: "https://youtu.be/UnD3YwhZ5wY?si=RIyQ7wkD7fzZ99GV",
+  codeLink: "https://github.com/Oliver-Renwick/Youtube-Videos/tree/main/Memory%20Allocators",
   type: "video"
    },
 
@@ -634,6 +637,23 @@ if (data.type === "video") {
   modalLink.classList.add("project-btn");
   modalLink.textContent = "View Project";
 }
+
+  /* ---------- EXTRA BUTTON WHEN codeLink PRESENT ---------- */
+const oldExtra = document.getElementById("extra-btn");
+if (oldExtra) oldExtra.remove();        // first remove any previous extra button
+
+if (data.codeLink) {
+  const extra = document.createElement("a");
+  extra.id = "extra-btn";
+  extra.href = data.codeLink;
+  extra.target = "_blank";
+  extra.className = "modal-btn project-btn";
+  extra.style.marginLeft = "10px";      // little gap to the right
+  extra.textContent = "View Code";
+  modalLink.after(extra);
+}
+
+
   });
 });
 
