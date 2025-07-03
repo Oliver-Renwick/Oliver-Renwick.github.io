@@ -418,6 +418,18 @@ position: relative;
 
     </div>
 
+
+    <h2 class="projects-title" style="margin-top: 60px;">Shaders</h2>
+
+<div class="projects-grid">
+  <a href="https://www.shadertoy.com/view/3XdGDN" target="_blank" class="project-link">
+    <div class="project-card">
+      <img src="shader_1.PNG" alt="Ghost Model" />
+      <div class="overlay">Ghost Model</div>
+    </div>
+  </a>
+</div>
+
     <h2 class="projects-title" style="margin-top: 60px;">YouTube Videos</h2>
 
 <div class="projects-grid">
@@ -443,6 +455,7 @@ position: relative;
     </div>
   </a>
 </div>
+
 
   </div>
 </main>
@@ -560,6 +573,23 @@ const projectData = {
   `,
   link: "https://youtu.be/UnD3YwhZ5wY?si=RIyQ7wkD7fzZ99GV",
   type: "video"
+   },
+
+  "Ghost Model": {
+  title: "Ghost Model",
+  image: "shader_1.PNG",
+  description: `
+    A stylized raymarched ghost model rendered entirely in GLSL. 
+    Built with signed distance fields and smooth blending techniques in ShaderToy.
+    
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li>Raymarching using Signed Distance Functions (SDF)</li>
+      <li>Smooth blending with soft edges</li>
+      <li>ShaderToy platform (GLSL only)</li>
+    </ul>
+  `,
+  link: "https://www.shadertoy.com/view/3XdGDN",
+  type: "project"
 }
 };
 
@@ -576,6 +606,7 @@ document.querySelectorAll(".project-link").forEach(link => {
     else if (src.includes("Other Version")) key = "Triangle";
     else if (src.includes("Game Engine Thumnail")) key = "Shadows";
     else if (src.includes("Memory Mangement")) key = "Allocator";
+    else if (src.includes("shader_1")) key = "Ghost Model";
 
     const data = projectData[key];
     modalImg.src = data.image;
