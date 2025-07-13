@@ -430,6 +430,14 @@ position: relative;
       <div class="overlay">Ghost Model</div>
     </div>
   </a>
+
+  <a href="https://www.shadertoy.com/view/W3c3DX" target="_blank" class="project-link">
+    <div class="project-card">
+      <img src="shader_2.PNG" alt="Ghost Model" />
+      <div class="overlay">Voronoi Tunnel</div>
+    </div>
+  </a>
+
 </div>
 
     <h2 class="projects-title" style="margin-top: 60px;">YouTube Videos</h2>
@@ -582,7 +590,7 @@ const projectData = {
   title: "Ghost Model",
   image: "shader_1.PNG",
   description: `
-    A stylized raymarched ghost 3D model rendered entirely in GLSL. 
+    A stylized raymarched ghost model rendered entirely in GLSL. 
     Built with signed distance fields and smooth blending techniques in ShaderToy.
     
     <ul style="padding-left: 20px; margin-top: 10px;">
@@ -593,7 +601,24 @@ const projectData = {
   `,
   link: "https://www.shadertoy.com/view/3XdGDN",
   type: "project"
+},
+
+"Voronoi Model": {
+  title: "Voronoi Model",
+  image: "shader_2.PNG",
+  description: `
+   Fly through a Voronoi tunnel — real-time, all in GLSL
+    
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li>Real-time GLSL Voronoi tunnel — no raymarching, just math.</li>
+      <li>Procedural tunnel of cells. Built with pure GLSL.</li>
+      <li>ShaderToy platform (GLSL only)</li>
+    </ul>
+  `,
+  link: "https://www.shadertoy.com/view/W3c3DX",
+  type: "project"
 }
+
 };
 
 // Bind click event to cards
@@ -610,6 +635,7 @@ document.querySelectorAll(".project-link").forEach(link => {
     else if (src.includes("Game Engine Thumnail")) key = "Shadows";
     else if (src.includes("Memory Mangement")) key = "Allocator";
     else if (src.includes("shader_1")) key = "Ghost Model";
+    else if (src.includes("shader_2")) key = "Voronoi Model";
 
     const data = projectData[key];
     modalImg.src = data.image;
